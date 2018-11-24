@@ -1,7 +1,10 @@
+tr {
+	line-height:15px;
+}
 td {
 	border:1px solid black;
-	width:1em;
-	height:1em;
+	width:15px;
+	height:15px;
 }
 textarea {
 	border:0px;
