@@ -1,0 +1,15 @@
+td {
+	border:1px solid black;
+	width:1em;
+	height:1em;
+}
+textarea {
+	border:0px;
+	resize: none;
+	padding: 0px;
+	margin: 0px;
+	width:inherit;
+	height:inherit;
+	text-align:center;
+}
+
