@@ -6,34 +6,56 @@ window.onload = function() {
 	let button = gebi("solve")
 	generateGrid(grid)
 	button.onclick = solve
-	document.addEventListener('keypress', keypress)
+	document.addEventListener('keydown', keypress)
 
 	gebi("load").onclick = () => { setGrid(sample) }
 }
 
 function keypress(event) {
 		let c = document.activeElement
-		if(c.type !== "textarea") { return }
+		l(c.type)
+		if(c.tagName !== "INPUT") { return }
 		let id = c.getAttribute("id").split("")
 		let x = Number(id[0])
 		let y = Number(id[1])
-		switch(event.key) {
+		let key = event.key
+		if(/^[1-9]$/.test(key)){
+			c.value = key
+			event.preventDefault()
+			return
+		}
+
+		let deletes = [ "Backspace", "Delete", " " ]
+		if(deletes.includes(key)){
+			c.value = " "
+		}
+
+		switch(key) {
 			case "ArrowUp":
-				if(y > 0) y -= 1
+				if(y > 0) --y
 				break
 			case "ArrowRight":
-				if(x < 8) x += 1
+				if(x < 8) ++x
 				break
 			case "ArrowDown":
-				if(y < 8) y += 1
-				l("here")
+				if(y < 8) ++y 
 				break
 			case "ArrowLeft":
-				if(x > 0) x -= 1
+				if(x > 0) --x 
+				break
+			case "Tab":
+				if(event.shiftKey){	
+					if(x > 0) --x
+					else if(y > 0){ --y; x=8 }
+				} else {
+					if(x < 8) ++x
+					else if(y < 8){ ++x; y=0 }
+				}
 		}
-		let n = gebi(""+x+y)
+		let n = gebi(''+x+y)
 		n.focus()
 		n.select()
+		event.preventDefault()
 }
 
 //TODO: only one digit allowed
@@ -45,10 +67,12 @@ function generateGrid(grid){
 		t.appendChild(row)
 		for(let n = 0; n < 9; n++){
 			let td = document.createElement("td")
-			var textArea = document.createElement("textarea")
-			var newContent = document.createTextNode("0")
+			var textArea = document.createElement("input")
+			var newContent = document.createTextNode(" ")
 			textArea.setAttribute("id", ""+n+i)
-			textArea.setAttribute("contenteditable", "true")
+			textArea.setAttribute("type", "tel")
+			textArea.setAttribute("pattern", "/d*")
+
 			textArea.onfocus = function(e) {
 				e.target.select()
 			}
@@ -57,14 +81,16 @@ function generateGrid(grid){
 			row.appendChild(td)
 
 			// there's probably a better way to do this
-			let divider = "5px "
-			let l = (n === 0 || n === 3 || n === 6) ? divider : "0 "
-			let t = (i === 0 || i === 3 || i === 6) ? divider : "0 "
-			let b = (i === 8) ? divider : "0 "
-			let r = (n === 8) ? divider : "0 "
+			let thick = "5px "
+			let thin = "1px "
+			let l = (n === 0 || n === 3 || n === 6) ? thick : thin
+			let t = (i === 0 || i === 3 || i === 6) ? thick : thin
+			let b = (i === 8) ? thick : thin
+			let r = (n === 8) ? thick : thin
 			td.setAttribute("style", "border-width:"+t+r+b+l+";")
 		}
 	}
+	gebi("00").setAttribute("autofocus", "true")
 }
 
 function getGrid(){
@@ -80,7 +106,6 @@ function getGrid(){
 	return grid
 }
 
-
 function setGrid(grid) {
 	if(grid.length !== 9) { 
 		l("bad grid")
@@ -89,7 +114,8 @@ function setGrid(grid) {
 	for(i = 0; i < 9; i++) {
 		for(n = 0; n < 9; n++){
 			val = grid[i][n]
-			if(val.length > 1) {val = "0"}
+			if(val.length > 1) {val = " "}
+			if(val === "0") {val = " "}
 			c = gebi(""+n+i)
 			c.value = val
 		}
@@ -118,7 +144,7 @@ function solve(){
 	// initialize with options
 	for(i = 0; i < 9; i++){
 		for(n = 0; n < 9; n++){
-			if(grid[i][n] === "0"){
+			if(grid[i][n] === " "){
 				grid[i][n] = "123456789"
 			}
 		}
@@ -192,16 +218,6 @@ function solve(){
 	l(grid)
 }
 
-let sample_bad =
- [[ "2", "1", "3", "6", "9", "7", "4", "0", "5"],
-  [ "4", "8", "0", "0", "0", "7", "3", "0", "2"],
-  [ "1", "0", "0", "0", "2", "6", "7", "0", "0"],
-  [ "3", "0", "1", "0", "0", "5", "9", "0", "0"],
-  [ "7", "0", "8", "0", "4", "0", "2", "3", "0"],
-  [ "6", "0", "0", "0", "8", "3", "0", "0", "0"],
-  [ "0", "2", "0", "0", "0", "0", "0", "9", "0"],
-  [ "8", "0", "6", "9", "7", "0", "5", "0", "0"],
-	[ "9", "0", "0", "6", "0", "1", "8", "0", "3"]]
 let sample =
  [[ "2", "0", "0", "0", "9", "0", "4", "0", "5"],
   [ "4", "8", "0", "0", "0", "7", "3", "0", "2"],

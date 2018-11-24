@@ -1,3 +1,6 @@
+table {
+	border-spacing:0px;
+}
 tr {
 	line-height:15px;
 }
@@ -6,7 +9,7 @@ td {
 	width:15px;
 	height:15px;
 }
-textarea {
+input {
 	border:0px;
 	resize: none;
 	padding: 0px;
@@ -16,3 +19,6 @@ textarea {
 	text-align:center;
 }
 
+input:focus{
+	background-color:yellow;
+}
