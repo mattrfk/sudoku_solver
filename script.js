@@ -82,7 +82,7 @@ function keypress(event) {
 		case 'Tab':
 			if(event.shiftKey){	
 				if(x > 0) { --x }
-				else if(y > 0){ --y; x=8 h }
+				else if(y > 0){ --y; x=8 }
 			} 
 			else {
 				if(x < 8) { ++x }
