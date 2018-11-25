@@ -82,24 +82,18 @@ function keypress(event) {
 		case 'Tab':
 			if(event.shiftKey){	
 				if(x > 0) { --x }
-				else if(y > 0){ 
-					--y; x=8 
-				}
+				else if(y > 0){ --y; x=8 h }
 			} 
 			else {
 				if(x < 8) { ++x }
-				else if(y < 8){ 
-					++y; x=0
-				}
+				else if(y < 8){ ++y; x=0 }
 			}
 	}
 	let n = gebi(''+x+y)
 	n.focus()
-	//n.select()
 	event.preventDefault()
 }
 
-//TODO: only one digit allowed
 function generateGrid(grid){
 	let t = document.createElement('table')
 	grid.appendChild(t)
@@ -175,7 +169,7 @@ function solve(){
 		}
 	}
 	
-	grid = solver(grid)
+	grid = solver(grid) // the magic
 
 	l(tries)
 	setGrid(grid)
@@ -198,7 +192,7 @@ function solver(g) {
 				saved[i][n] = e.slice(0,-1) // store the remainders in saved.
 				grid = solver(grid)         // Recursively try this guess.
 
-				// if we got an invalid grid then that guess was bad
+				// if we got an invalid grid then start over
 				if(!isValid(grid)) { grid = copyGrid(saved) }
 			}
 		}}
@@ -208,8 +202,7 @@ function solver(g) {
 }
 
 // for each place with possibilities, 
-// check its row, column and square
-// and eliminate those possibilities
+// check its row, column and square and make eliminations
 function doEliminations(g){
 	// eliminate possibilities in el using certainties in arr
 	function elim(arr, el){
@@ -280,7 +273,7 @@ function isSolved(g){
 
 	let sqs = getSquares(g)
 	for(let i in sqs){
-			if(sqs[i].reduce(f) !== 45){ return false }
+		if(sqs[i].reduce(f) !== 45){ return false }
 	}
 
 	return true
@@ -378,30 +371,8 @@ function getSquare(grid, i, n){
 	return box
 }
 
-let s1 =
-[[ '2', '0', '0', '0', '9', '0', '4', '0', '5'],
- [ '4', '8', '0', '0', '0', '7', '3', '0', '2'],
- [ '0', '0', '0', '0', '2', '6', '7', '0', '0'],
- [ '3', '0', '1', '0', '0', '5', '9', '0', '0'],
- [ '7', '0', '8', '0', '4', '0', '2', '3', '0'],
- [ '6', '0', '0', '0', '8', '3', '0', '0', '0'],
- [ '0', '2', '0', '0', '0', '0', '0', '9', '0'],
- [ '8', '0', '6', '9', '7', '0', '5', '0', '0'],
- [ '9', '0', '0', '6', '0', '1', '8', '0', '3']]
-
-
-let s2 = 
-[['0', '0', '0', '0', '0', '8', '9', '6', '0'],
- ['0', '0', '0', '0', '3', '5', '0', '7', '4'],
- ['7', '0', '5', '0', '9', '0', '2', '0', '0'],
- ['2', '0', '0', '0', '0', '0', '0', '9', '0'],
- ['0', '0', '6', '0', '8', '0', '7', '0', '0'],
- ['0', '9', '0', '0', '0', '0', '0', '0', '1'],
- ['0', '0', '1', '0', '2', '0', '6', '0', '7'],
- ['4', '8', '0', '6', '1', '0', '0', '0', '0'],
- ['0', '2', '7', '3', '0', '0', '0', '0', '0']]
-
-// this one is harder!
+// "the worlds hardest sudoku"
+// http://sw-amt.ws/sudoku/worlds-hardest-sudoku/xx-world-hardest-sudoku.html#introduction
 let s3 = 
 [["8", " ", " ", " ", " ", " ", " ", " ", " "],
  [" ", " ", "3", "6", " ", " ", " ", " ", " "],
