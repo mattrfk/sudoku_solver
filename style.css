@@ -22,3 +22,13 @@ input {
 input:focus{
 	background-color:yellow;
 }
+
+#read {
+	display:block;
+}
+#text {
+	display: block;
+	visibility: hidden;
+	height: 11em;
+}
+

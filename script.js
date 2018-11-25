@@ -3,9 +3,49 @@ function gebi(id){ return document.getElementById(id)}
 
 window.onload = function() {
 	generateGrid(gebi('grid'))
-	gebi('solve').onclick = solve
+	gebi('print').onclick = print
+	gebi('read').onclick = read
 	gebi('load').onclick = () => { setGrid(sample) }
+
+	gebi('solve').onclick = solve
 	document.addEventListener('keydown', keypress)
+}
+
+function print(){
+	let g = getGrid()
+	let s = ""
+	for(let i = 0; i < 9; i++){
+		for(let n = 0; n < 9; n++){
+			if(isBlank(g[i][n])) { s += '0' }
+			else { s += g[i][n] }
+			if(n < 8) s += ' '
+		}
+		if(i < 8) s += "\n"
+	}
+	alert(s)
+}
+
+function read() {
+	let load = "upload"
+	let ta = gebi('text')
+	let button = gebi('read')
+	if(button.textContent != load){
+		ta.setAttribute('style', 'visibility:visible;')
+		button.textContent = load
+	} else {
+		let s = ta.value
+		ta.value = ""
+
+		let grid = s.split('\n')
+		for(i in grid){
+			grid[i] = grid[i].split(' ')
+		}
+
+		if(isValid(grid)) { setGrid(grid) }
+		else { alert("bad data") }
+		button.textContent = "read txt"
+		ta.setAttribute('style', 'visibility:hidden;')
+	}
 }
 
 function keypress(event) {
@@ -81,7 +121,6 @@ function generateGrid(grid){
 			td.appendChild(textArea)
 			row.appendChild(td)
 
-			// there's probably a better way to do this
 			let thick = '5px '
 			let thin = '1px '
 			let l = (n === 0 || n === 3 || n === 6) ? thick : thin
@@ -205,7 +244,7 @@ function isValid(g){
 	function checkDup(arr){
 		let c = ''
 		for(let i=0; i<arr.length; i++){
-			if(arr[i].length === 1 && arr[i] !== ' ') { 
+			if(arr[i].length === 1 && !isBlank(arr[i])) { 
 				if(c.includes(arr[i])) { return false }
 				c += arr[i]
 			}
