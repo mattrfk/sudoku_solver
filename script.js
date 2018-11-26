@@ -3,36 +3,43 @@ function gebi(id){ return document.getElementById(id)}
 
 window.onload = function() {
 	generateGrid(gebi('grid'))
-	gebi('print').onclick = print
-	gebi('read').onclick = read
-	gebi('load').onclick = () => { setGrid(sample) }
 
+	gebi('print').onclick = printTxt
+	gebi('read').onclick = readTxt
+	gebi('load').onclick = () => { setGrid(sample) }
 	gebi('solve').onclick = solve
+
 	document.addEventListener('keydown', keypress)
 }
 
-function print(){
+function printTxt(){
 	let g = getGrid()
 	let s = ""
 	for(let i = 0; i < 9; i++){
 		for(let n = 0; n < 9; n++){
-			if(isBlank(g[i][n])) { s += '0' }
+			if(isBlank(g[i][n])) { 
+				s += '0' 
+			}
+
 			else { s += g[i][n] }
 			if(n < 8) s += ' '
 		}
+
 		if(i < 8) s += "\n"
 	}
+
 	alert(s)
 }
 
-function read() {
+function readTxt() {
 	let load = "upload"
 	let ta = gebi('text')
 	let button = gebi('read')
 	if(button.textContent != load){
 		ta.setAttribute('style', 'visibility:visible;')
 		button.textContent = load
-	} else {
+	} 
+	else {
 		let s = ta.value
 		ta.value = ""
 
@@ -50,19 +57,22 @@ function read() {
 
 function keypress(event) {
 	let c = document.activeElement
-	if(c.tagName !== 'INPUT') { return }
+
+	if (c.tagName !== 'INPUT') { return }
+
 	let id = c.getAttribute('id').split('')
 	let x = Number(id[0])
 	let y = Number(id[1])
 	let key = event.key
-	if(/^[1-9]$/.test(key)){
+
+	if (/^[1-9]$/.test(key)) {
 		c.value = key
 		event.preventDefault()
 		return
 	}
 
 	let deletes = [ 'Backspace', 'Delete', ' ' ]
-	if(deletes.includes(key)){
+	if (deletes.includes(key)) {
 		c.value = ' '
 	}
 
@@ -89,6 +99,7 @@ function keypress(event) {
 				else if(y < 8){ ++y; x=0 }
 			}
 	}
+
 	let n = gebi(''+x+y)
 	n.focus()
 	event.preventDefault()
@@ -185,7 +196,8 @@ function solver(g) {
 	if(!isSolved(grid)) { // need to guess
 		let saved = copyGrid(grid) // save state before guessing
 		
-		for(let i=0; i<9; i++){ for(let n=0; n<9; n++){
+		for(let i=0; i<9; i++) { 
+			for(let n=0; n<9; n++) {
 			if(grid[i][n].length > 1) { 	// find the 1st cell with possibilities
 				let e = grid[i][n]
 				grid[i][n] = e.slice(-1) 		// Pop the last possibility and try it,

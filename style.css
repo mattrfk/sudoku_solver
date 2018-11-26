@@ -27,7 +27,6 @@ input:focus{
 	display:block;
 }
 #text {
-	display: block;
 	visibility: hidden;
 	height: 11em;
 }
