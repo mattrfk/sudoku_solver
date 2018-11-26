@@ -28,30 +28,26 @@ function printTxt(){
 		if(i < 8) s += "\n"
 	}
 
-	alert(s)
+	let ta = gebi('text')
+	//ta.textContent = s
+	ta.value = s
 }
 
 function readTxt() {
-	let load = "upload"
 	let ta = gebi('text')
 	let button = gebi('read')
-	if(button.textContent != load){
-		ta.setAttribute('style', 'visibility:visible;')
-		button.textContent = load
-	} 
-	else {
-		let s = ta.value
-		ta.value = ""
+	let s = ta.value
 
-		let grid = s.split('\n')
-		for(i in grid){
-			grid[i] = grid[i].split(' ')
-		}
+	let grid = s.split('\n')
+	for(i in grid){
+		grid[i] = grid[i].split(' ')
+	}
 
-		if(isValid(grid)) { setGrid(grid) }
-		else { alert("bad data") }
-		button.textContent = "read txt"
-		ta.setAttribute('style', 'visibility:hidden;')
+	if(isValid(grid)) { 
+		setGrid(grid) 
+	}
+	else { 
+		//alert("bad data") 
 	}
 }
 
