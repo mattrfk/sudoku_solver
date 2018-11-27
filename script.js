@@ -1,5 +1,6 @@
 function l(msg){ console.log(msg)}
 function gebi(id){ return document.getElementById(id)}
+let tries = 0
 
 window.onload = function() {
 	generateGrid(gebi('grid'))
@@ -162,10 +163,7 @@ function setGrid(grid) {
 	}
 }
 
-let tries
 function solve(){
-	tries = 0
-
 	let grid = getGrid()
 	// initialize with options
 	for(let i = 0; i < 9; i++){
@@ -176,47 +174,61 @@ function solve(){
 		}
 	}
 	
-	grid = solver(grid) // the magic
+	t = Date.now()
+	grid = solver(grid) // the magic method
+	t2 = Date.now()
 
-	l(tries)
+	l('time ' + (t2 - t) / 1000 + 's')
+	l('tries ' + tries)
+	l('empties ' + empties)
 	setGrid(grid)
 }
 
 function solver(g) {
 	tries++
 	// success or failure, either way we are done
-	if(isSolved(g) || !isValid(g)) { return g }	
+	if(!isValid(g)) { return g }	
 		
 	let grid = doEliminations(g)
 	
-	if(!isSolved(grid)) { // need to guess
+	if(!isSolved(grid) && isValid(grid)) { // need to guess
 		let saved = copyGrid(grid) // save state before guessing
 		
 		for(let i=0; i<9; i++) { 
 			for(let n=0; n<9; n++) {
-			if(grid[i][n].length > 1) { 	// find the 1st cell with possibilities
-				let e = grid[i][n]
-				grid[i][n] = e.slice(-1) 		// Pop the last possibility and try it,
-				saved[i][n] = e.slice(0,-1) // store the remainders in saved.
-				grid = solver(grid)         // Recursively try this guess.
+				if(grid[i][n].length > 1) { 	// find the 1st cell with possibilities
+					let e = grid[i][n]
+					grid[i][n] = e.slice(-1) 		// Pop the last possibility and try it,
+					saved[i][n] = e.slice(0,-1) // store the remainders in saved.
+					grid = solver(grid)         // Recursively try this guess.
 
-				// if we got an invalid grid then start over
-				if(!isValid(grid)) { grid = copyGrid(saved) }
+					// if we got an invalid grid then start over
+					if(!isValid(grid)) { 
+						grid = copyGrid(saved) 
+					}
+				}
 			}
-		}}
+		}
 	}
 
+	// if here, then there are no more guesses to make;
+	// it is either solved or we are stuck
 	return grid
 }
 
 // for each place with possibilities, 
 // check its row, column and square and make eliminations
 function doEliminations(g){
+
 	// eliminate possibilities in el using certainties in arr
 	function elim(arr, el){
+		if(el.length === 1) { // no more eliminations to make here
+			return el
+		}
 		for(let i=0; i < arr.length; i++){
-			if(arr[i].length > 1) {continue}
-			el = el.replace(arr[i], '')
+			if(arr[i].length === 1) { // act only when certain
+				el = el.replace(arr[i], '')
+			}
 		}
 		return el
 	}
@@ -228,7 +240,7 @@ function doEliminations(g){
 		for(let i = 0; i < 9; i++){
 			for(let n = 0; n < 9; n++){
 				let val = grid[i][n]
-				if(val.length === 1) { continue } 
+				//if(val.length === 1) { continue } 
 				val = elim(getSquare(grid, i, n), val) //square
 				val = elim(getColumn(grid, n), val) //column
 				val = elim(grid[i], val) //row
@@ -239,6 +251,7 @@ function doEliminations(g){
 	return grid
 }
 
+let empties = 0
 // return true even if incomplete but everything checks out
 function isValid(g){
 	// check for duplicates
@@ -246,7 +259,9 @@ function isValid(g){
 		let c = ''
 		for(let i=0; i<arr.length; i++){
 			if(arr[i].length === 1 && !isBlank(arr[i])) { 
-				if(c.includes(arr[i])) { return false }
+				if(c.includes(arr[i])) { 
+					return false 
+				}
 				c += arr[i]
 			}
 		}
@@ -254,17 +269,27 @@ function isValid(g){
 	}
 
 	// check grid for empties
-	for(let i=0; i<9; i++){ for(let n=0; n<9; n++){
-		if(g[i][n].length < 1) { return false }
-	}}
+	for(let i=0; i<9; i++){ 
+		for(let n=0; n<9; n++){
+			if(g[i][n].length < 1) { 
+				empties++
+				return false 
+			}
+		}
+	}
 
-	// check squares for dups
-	for(let i=0; i<9; i+=3){ 
-		if(!checkDup(getColumn(g,i))) { return false }
-		if(!checkDup(g[i])) { return false }
+	for(let i = 0; i < 9; i++) {
+		if(!checkDup(getColumn(g,i))) { 
+			return false
+		}
+		if(!checkDup(g[i])) { 
+			return false 
+		}
+	}
 
-		for(let n=0; n<9; n+=3){
-			if(!checkDup(getSquare(g, i, n))) { return false }
+	for(let s in getSquares(g)){
+		if(!checkDup(s)) { 
+			return false 
 		}
 	}
 
@@ -275,13 +300,19 @@ function isSolved(g){
 	let f = (x,y) => (Number(x) + Number(y))
 
 	for(let i = 0; i < 9; i++) {
-		if(g[i].reduce(f) !== 45){ return false }
-		if(getColumn(g, i).reduce(f) !== 45){ return false }
+		if(g[i].reduce(f) !== 45){ 
+			return false 
+		}
+		if(getColumn(g, i).reduce(f) !== 45){ 
+			return false 
+		}
 	}
 
 	let sqs = getSquares(g)
 	for(let i in sqs){
-		if(sqs[i].reduce(f) !== 45){ return false }
+		if(sqs[i].reduce(f) !== 45){ 
+			return false 
+		}
 	}
 
 	return true
@@ -332,43 +363,10 @@ function getSquares(g) {
 }
 
 function getSquare(grid, i, n){
-	let x1 = 0, x2 = 0, y1 = 0, y2 = 0
-	if(i < 3 && n < 3) {
-		x2 = 3
-		y2 = 3
-	} // top left
-	else if (i < 3 && n < 6) {
-		x2 = 3
-		y1 = 3; y2 = 6
-	} //middle left
-	else if (i < 3) {
-		x2 = 3
-		y1 = 6; y2 = 9
-	} //bottom left
-	else if(i < 6 && n < 3) {
-		x1 = 3; x2 = 6
-		y2 = 3
-	} // top middle
-	else if (i < 6 && n < 6) {
-		x1 = 3; x2 = 6
-		y1 = 3; y2 = 6
-	} //middle middle
-	else if (i < 6) {
-		x1 = 3; x2 = 6
-		y1 = 6; y2 = 9
-	} //bottom middle
-	else if(n < 3) {
-		x1 = 6; x2 = 9
-		y2 = 3
-	} // top right
-	else if (n < 6) {
-		x1 = 6; x2 = 9
-		y1 = 3; y2 = 6
-	} //right middle
-	else {
-		x1 = 6; x2 = 9
-		y1 = 6; y2 = 9
-	} // right bottom
+	const x1 = 3 * Math.floor(i/3)
+	const y1 = 3 * Math.floor(n/3)
+	const x2 = 3 + x1
+	const y2 = 3 + y1
 
 	let box = []
 	for(let x = x1; x < x2; x++){
@@ -385,7 +383,7 @@ let s3 =
 [["8", " ", " ", " ", " ", " ", " ", " ", " "],
  [" ", " ", "3", "6", " ", " ", " ", " ", " "],
  [" ", "7", " ", " ", "9", " ", "2", " ", " "],
- [" ", " ", " ", " ", " ", "7", " ", " ", " "],
+ [" ", "5", " ", " ", " ", "7", " ", " ", " "],
  [" ", " ", " ", " ", "4", "5", "7", " ", " "],
  [" ", " ", " ", "1", " ", " ", " ", "3", " "],
  [" ", " ", "1", " ", " ", " ", " ", "6", "8"],
