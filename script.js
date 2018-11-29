@@ -1,6 +1,6 @@
 function l(msg){ console.log(msg) }
 function gebi(id){ return document.getElementById(id) }
-let tries = 0
+
 
 let ss = SudokuSolver()
 
@@ -17,13 +17,7 @@ window.onload = function() {
 
 function solveButton(){
 	let grid = getGrid()
-	
-	let t = Date.now()
 	grid = ss.solve(grid)
-	t2 = Date.now()
-
-	l('time ' + (t2 - t) / 1000 + 's')
-	l('tries ' + tries)
 	setGrid(grid)
 }
 
@@ -44,7 +38,6 @@ function printTxt(){
 	}
 
 	let ta = gebi('text')
-	//ta.textContent = s
 	ta.value = s
 }
 

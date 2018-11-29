@@ -7,6 +7,32 @@ const SudokuSolver = () => {
 		isBlank: isBlank
 	}
 
+	let tries = 0 
+
+	// take a grid that is a 9x9 2D array
+	// with either single digit or blank represented by 
+	// a space ' '
+	function solve(grid){
+		// initialize with options
+		for(let i = 0; i < 9; i++){
+			for(let n = 0; n < 9; n++){
+				if(isBlank(grid[i][n])){
+					grid[i][n] = '123456789'
+				}
+			}
+		}
+
+		let t = Date.now()
+
+		grid = solver(grid) // do the magic
+
+		t2 = Date.now()
+
+		l('time ' + (t2 - t) / 1000 + 's')
+		l('tries ' + tries)
+		tries = 0
+		return solver(grid)
+	}
 
 	function isBlank(c){
 		if(c === ' ' || c === ''  || c === '0' ) { 
@@ -24,30 +50,46 @@ const SudokuSolver = () => {
 		if(!isSolved(grid) && isValid(grid)) { // need to guess
 			let saved = copyGrid(grid) // save state before guessing
 			
-			for(let i=0; i<9; i++) { 
-				for(let n=0; n<9; n++) {
+			x = findPossibilities(grid)
+			while(x !== null) {
+				let e = grid[x.i][x.n]
+				
+				// Pop the last possibility and try it,
+				grid[x.i][x.n] = e.slice(-1) 		
+				saved[x.i][x.n] = e.slice(0,-1) // store the remainders in saved.
+				grid = solver(grid)         // Recursively try this guess.
 
-					// find the 1st cell with possibilities
-					if(grid[i][n].length > 1) { 	
-						let e = grid[i][n]
-						
-						// Pop the last possibility and try it,
-						grid[i][n] = e.slice(-1) 		
-						saved[i][n] = e.slice(0,-1) // store the remainders in saved.
-						grid = solver(grid)         // Recursively try this guess.
+				// if we got an invalid grid then start over
+				if(!isValid(grid)) { 
+					grid = copyGrid(saved) 
+				}
+				x = findPossibilities(grid)
+			}
+		}
+		
+		// if here, then there are no more guesses to make;
+		// it is either solved or we are stuck
+		return grid
+	}
 
-						// if we got an invalid grid then start over
-						if(!isValid(grid)) { 
-							grid = copyGrid(saved) 
-						}
+	function findPossibilities(grid) {
+		let shortest = 9
+		let coordinates = null
+		for(let i = 0; i < 9; i++) { 
+			for(let n = 0; n < 9; n++) {
+				let len = grid[i][n].length
+				if(len > 1) {
+					if(len === 2) {
+						return {i:i, n:n}
+					}
+					else if( len < shortest ) {
+						shortest = len
+						coordinates = {i:i, n:n}
 					}
 				}
 			}
 		}
-
-		// if here, then there are no more guesses to make;
-		// it is either solved or we are stuck
-		return grid
+		return coordinates
 	}
 
 	// for each place with possibilities, 
@@ -203,22 +245,6 @@ const SudokuSolver = () => {
 			}
 		}
 		return box
-	}
-
-	// take a grid that is a 9x9 2D array
-	// with either single digit or blank represented by 
-	// a space ' '
-	function solve(grid){
-		// initialize with options
-		for(let i = 0; i < 9; i++){
-			for(let n = 0; n < 9; n++){
-				if(isBlank(grid[i][n])){
-					grid[i][n] = '123456789'
-				}
-			}
-		}
-
-		return solver(grid)
 	}
 
 	return Interface
