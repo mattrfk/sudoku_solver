@@ -28,17 +28,17 @@ input:focus{
 }
 
 .button {
-	border-width: 1px;
+	border-width: 0px;
 	border-style: solid black;
 	margin: 4px;
-	padding-top: 6px;
+	padding: 6px;
 	padding-bottom: 6px;
 	background: white;
 	font-size: 1em;
+	background-color: #d1d1d1;
 }
 
 .button:hover {
-	background: rgb(175, 255, 5);
 }
 
 #text {

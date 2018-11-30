@@ -4,12 +4,19 @@ function gebi(id) { return document.getElementById(id) }
 
 const ss = SudokuSolver()
 
+const solvedColor = "rgba(36, 255, 106, 1)"
+const unsolvedColor = "rgba(255, 29, 5, 0.61)"
+const defaultColor = "#d1d1d1"
+
 window.onload = function() {
 	generateGrid(gebi('grid'))
 
 	gebi('print').onclick = printTxt
 	gebi('read').onclick = readTxt
-	gebi('load').onclick = () => { setGrid(sample) }
+	gebi('load').onclick = () => { 
+		setGrid(sample) 
+		setSolveButtonColor(defaultColor)
+	}
 	gebi('solve').onclick = solveButton
 	gebi('clear').onclick = clear
 	gebi('advanced').onclick = toggleAdvanced
@@ -20,6 +27,7 @@ window.onload = function() {
 function clear() {
 	g = Array(9).fill(Array(9).fill(' '))
 	setGrid(g)
+	setSolveButtonColor(defaultColor)
 }
 
 function toggleAdvanced() {
@@ -32,10 +40,21 @@ function toggleAdvanced() {
 	}
 }
 
+function setSolveButtonColor(color=defaultColor){
+	let button = gebi("solve")
+	button.style.backgroundColor = color
+}
+
 function solveButton() {
 	let grid = getGrid()
 	grid = ss.solve(grid)
 	setGrid(grid)
+	if(ss.isSolved(grid) && ss.isValid(grid)) {
+		setSolveButtonColor(solvedColor)
+	}
+	else {
+		setSolveButtonColor(unsolvedColor)
+	}
 }
 
 function printTxt() {
@@ -70,6 +89,7 @@ function readTxt() {
 
 	if(ss.isValid(grid)) { 
 		setGrid(grid) 
+		setSolveButtonColor(defaultColor)
 	}
 	else { 
 		//alert("bad data") 

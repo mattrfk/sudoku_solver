@@ -8,6 +8,7 @@ function SudokuSolver() {
 		solve: solve,
 		isBlank: isBlank,
 		isValid: isValid,
+		isSolved: isSolved,
 	}
 
 	let solveCycles = 0 // for logging
