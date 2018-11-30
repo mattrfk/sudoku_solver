@@ -1,14 +1,17 @@
 table {
 	border-spacing:0px;
 }
+
 tr {
 	line-height:15px;
 }
+
 td {
 	border:1px solid black;
-	width:15px;
-	height:15px;
+	width:2em;
+	height:2em;
 }
+
 input {
 	border:0px;
 	resize: none;
@@ -17,15 +20,39 @@ input {
 	width:inherit;
 	height:inherit;
 	text-align:center;
+	font-size: 1.9em;
 }
 
 input:focus{
 	background-color:yellow;
 }
 
+.button {
+	border-width: 1px;
+	border-style: solid black;
+	margin: 4px;
+	padding-top: 6px;
+	padding-bottom: 6px;
+	background: white;
+	font-size: 1em;
+}
+
+.button:hover {
+	background: rgb(175, 255, 5);
+}
+
 #text {
-	/*visibility: hidden; */
 	height: 11em;
 	display: block;
 }
 
+#advanced-holder {
+	visibility: hidden;
+}
+
+#solver {
+	position: absolute;
+	left: 50%;
+	transform: translate(-50%);
+	-webkit-transform: translate(-50%);
+}

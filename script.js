@@ -11,8 +11,25 @@ window.onload = function() {
 	gebi('read').onclick = readTxt
 	gebi('load').onclick = () => { setGrid(sample) }
 	gebi('solve').onclick = solveButton
+	gebi('clear').onclick = clear
+	gebi('advanced').onclick = toggleAdvanced
 
 	document.addEventListener('keydown', keypress)
+}
+
+function clear() {
+	g = Array(9).fill(Array(9).fill(' '))
+	setGrid(g)
+}
+
+function toggleAdvanced() {
+	let style = gebi('advanced-holder').style
+	if( style.visibility === "hidden" || style.visibility === "") {
+		style.visibility = "visible"
+	}
+	else {
+		 style.visibility = "hidden"
+	}
 }
 
 function solveButton() {
@@ -69,39 +86,55 @@ function keypress(event) {
 	let y = Number(id[1])
 	let key = event.key
 
+	function tab(shift=false) {
+		if(shift) {	
+			if(x > 0) { --x }
+			else if(y > 0) { --y; x=8 }
+		} 
+		else {
+			if(x < 8) { ++x }
+			else if(y < 8) { ++y; x=0 }
+		}
+	}
+
 	if (/^[1-9]$/.test(key)) {
 		c.value = key
-		event.preventDefault()
-		return
+		tab()
 	}
-
-	let deletes = [ 'Backspace', 'Delete', ' ' ]
-	if (deletes.includes(key)) {
-		c.value = ' '
-	}
-
-	switch(key) {
-		case 'ArrowUp':
-			if(y > 0) --y
-			break
-		case 'ArrowRight':
-			if(x < 8) ++x
-			break
-		case 'ArrowDown':
-			if(y < 8) ++y 
-			break
-		case 'ArrowLeft':
-			if(x > 0) --x 
-			break
-		case 'Tab':
-			if(event.shiftKey) {	
-				if(x > 0) { --x }
-				else if(y > 0) { --y; x=8 }
-			} 
-			else {
-				if(x < 8) { ++x }
-				else if(y < 8) { ++y; x=0 }
+	else {
+		let deletes = [ 'Backspace', 'Delete']
+		if (deletes.includes(key)) {
+			if(key === 'Backspace') {
+				tab(true)
 			}
+			c.value = ' '
+		}
+		let blanks = [' ', '0', '-']
+		if( blanks.includes(key) ){
+			tab()
+		}
+
+		switch(key) {
+			case 'ArrowUp':
+				if(y > 0) --y
+				break
+			case 'ArrowRight':
+				if(x < 8) ++x
+				break
+			case 'ArrowDown':
+				if(y < 8) ++y 
+				break
+			case 'ArrowLeft':
+				if(x > 0) --x 
+				break
+			case 'Tab':
+				if(event.shiftKey) {	
+					tab(true)
+				} 
+				else {
+					tab()
+				}
+		}
 	}
 
 	let n = gebi(''+x+y)
@@ -139,6 +172,7 @@ function generateGrid(grid) {
 			td.setAttribute('style', 'border-width:'+t+r+b+l+';')
 		}
 	}
+
 	gebi('00').setAttribute('autofocus', 'true')
 }
 
@@ -151,15 +185,17 @@ function getGrid() {
 			grid[i].push(val)
 		}
 	}
+
 	return grid
 }
 
 // put the data into the html
 function setGrid(grid) {
-	if(grid.length !== 9) {  // TODO better validation
+	if(grid.length !== 9) {
 		l('bad grid')
 		return
 	}
+
 	for(let i = 0; i < 9; i++) {
 		for(let n = 0; n < 9; n++) {
 			val = grid[i][n]
