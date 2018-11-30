@@ -1,8 +1,8 @@
-function l(msg){ console.log(msg) }
-function gebi(id){ return document.getElementById(id) }
+;'use strict';
 
+function gebi(id) { return document.getElementById(id) }
 
-let ss = SudokuSolver()
+const ss = SudokuSolver()
 
 window.onload = function() {
 	generateGrid(gebi('grid'))
@@ -15,17 +15,17 @@ window.onload = function() {
 	document.addEventListener('keydown', keypress)
 }
 
-function solveButton(){
+function solveButton() {
 	let grid = getGrid()
 	grid = ss.solve(grid)
 	setGrid(grid)
 }
 
-function printTxt(){
+function printTxt() {
 	let g = getGrid()
 	let s = ""
-	for(let i = 0; i < 9; i++){
-		for(let n = 0; n < 9; n++){
+	for(let i = 0; i < 9; i++) {
+		for(let n = 0; n < 9; n++) {
 			if( ss.isBlank(g[i][n])) { 
 				s += '0' 
 			}
@@ -47,11 +47,11 @@ function readTxt() {
 	let s = ta.value
 
 	let grid = s.split('\n')
-	for(i in grid){
+	for(i in grid) {
 		grid[i] = grid[i].split(' ')
 	}
 
-	if(isValid(grid)) { 
+	if(ss.isValid(grid)) { 
 		setGrid(grid) 
 	}
 	else { 
@@ -94,13 +94,13 @@ function keypress(event) {
 			if(x > 0) --x 
 			break
 		case 'Tab':
-			if(event.shiftKey){	
+			if(event.shiftKey) {	
 				if(x > 0) { --x }
-				else if(y > 0){ --y; x=8 }
+				else if(y > 0) { --y; x=8 }
 			} 
 			else {
 				if(x < 8) { ++x }
-				else if(y < 8){ ++y; x=0 }
+				else if(y < 8) { ++y; x=0 }
 			}
 	}
 
@@ -109,13 +109,13 @@ function keypress(event) {
 	event.preventDefault()
 }
 
-function generateGrid(grid){
+function generateGrid(grid) {
 	let t = document.createElement('table')
 	grid.appendChild(t)
 	for(let i = 0; i < 9; i++) {
 		let row = document.createElement('tr')
 		t.appendChild(row)
-		for(let n = 0; n < 9; n++){
+		for(let n = 0; n < 9; n++) {
 			let td = document.createElement('td')
 			var textArea = document.createElement('input')
 			var newContent = document.createTextNode(' ')
@@ -142,11 +142,11 @@ function generateGrid(grid){
 	gebi('00').setAttribute('autofocus', 'true')
 }
 
-function getGrid(){
+function getGrid() {
 	grid = []
 	for(let i = 0; i < 9; i++) {
 		grid.push([])
-		for(let n = 0; n < 9; n++){
+		for(let n = 0; n < 9; n++) {
 			val = gebi(''+n+i).value
 			grid[i].push(val)
 		}
@@ -161,7 +161,7 @@ function setGrid(grid) {
 		return
 	}
 	for(let i = 0; i < 9; i++) {
-		for(let n = 0; n < 9; n++){
+		for(let n = 0; n < 9; n++) {
 			val = grid[i][n]
 			if(val.length > 1 || ss.isBlank(val)) {val = ' '}
 			c = gebi(''+n+i)

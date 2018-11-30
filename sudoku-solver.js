@@ -1,47 +1,51 @@
 ;'use strict';
 
-const SudokuSolver = () => {
+function l(msg) { console.log(msg) }
+
+function SudokuSolver() {
 
 	const Interface = {
 		solve: solve,
-		isBlank: isBlank
+		isBlank: isBlank,
+		isValid: isValid,
 	}
 
-	let tries = 0 
+	let solveCycles = 0 // for logging
 
 	// take a grid that is a 9x9 2D array
 	// with either single digit or blank represented by 
 	// a space ' '
-	function solve(grid){
+	function solve(grid) {
 		// initialize with options
-		for(let i = 0; i < 9; i++){
-			for(let n = 0; n < 9; n++){
-				if(isBlank(grid[i][n])){
+		for(let i = 0; i < 9; i++) {
+			for(let n = 0; n < 9; n++) {
+				if(isBlank(grid[i][n])) {
 					grid[i][n] = '123456789'
 				}
 			}
 		}
 
-		let t = Date.now()
+		let t1 = Date.now()
 
 		grid = solver(grid) // do the magic
 
 		t2 = Date.now()
 
-		l('time ' + (t2 - t) / 1000 + 's')
-		l('tries ' + tries)
-		tries = 0
+		l('time to solve ' + (t2 - t1) / 1000 + 's')
+		l('tries ' + solveCycles)
+		solveCycles = 0
+
 		return solver(grid)
 	}
 
-	function isBlank(c){
+	function isBlank(c) {
 		if(c === ' ' || c === ''  || c === '0' ) { 
 			return true }
 		return false
 	}
 
 	function solver(g) {
-		tries++
+		solveCycles++
 		// success or failure, either way we are done
 		if(!isValid(g)) { return g }	
 			
@@ -94,14 +98,14 @@ const SudokuSolver = () => {
 
 	// for each place with possibilities, 
 	// check its row, column and square and make eliminations
-	function doEliminations(g){
+	function doEliminations(g) {
 
 		// eliminate possibilities in el using certainties in arr
-		function elim(arr, el){
+		function elim(arr, el) {
 			if(el.length === 1) { // no more eliminations to make here
 				return el
 			}
-			for(let i=0; i < arr.length; i++){
+			for(let i=0; i < arr.length; i++) {
 				if(arr[i].length === 1) { // act only when certain
 					el = el.replace(arr[i], '')
 				}
@@ -113,10 +117,9 @@ const SudokuSolver = () => {
 		let oldGrid
 		do { // keep doing eliminations until no progress is made
 			oldGrid = copyGrid(grid)
-			for(let i = 0; i < 9; i++){
-				for(let n = 0; n < 9; n++){
+			for(let i = 0; i < 9; i++) {
+				for(let n = 0; n < 9; n++) {
 					let val = grid[i][n]
-					//if(val.length === 1) { continue } 
 					val = elim(getSquare(grid, i, n), val) //square
 					val = elim(getColumn(grid, n), val) //column
 					val = elim(grid[i], val) //row
@@ -127,13 +130,12 @@ const SudokuSolver = () => {
 		return grid
 	}
 
-	let empties = 0
 	// return true even if incomplete but everything checks out
-	function isValid(g){
+	function isValid(g) {
 		// check for duplicates
-		function checkDup(arr){
+		function checkDup(arr) {
 			let c = ''
-			for(let i=0; i<arr.length; i++){
+			for(let i=0; i<arr.length; i++) {
 				if(arr[i].length === 1 && !isBlank(arr[i])) { 
 					if(c.includes(arr[i])) { 
 						return false 
@@ -145,10 +147,9 @@ const SudokuSolver = () => {
 		}
 
 		// check grid for empties
-		for(let i=0; i<9; i++){ 
-			for(let n=0; n<9; n++){
+		for(let i=0; i<9; i++) { 
+			for(let n=0; n<9; n++) {
 				if(g[i][n].length < 1) { 
-					empties++
 					return false 
 				}
 			}
@@ -163,7 +164,7 @@ const SudokuSolver = () => {
 			}
 		}
 
-		for(let s in getSquares(g)){
+		for(let s in getSquares(g)) {
 			if(!checkDup(s)) { 
 				return false 
 			}
@@ -172,21 +173,21 @@ const SudokuSolver = () => {
 		return true
 	}
 
-	function isSolved(g){
+	function isSolved(g) {
 		let f = (x,y) => (Number(x) + Number(y))
 
 		for(let i = 0; i < 9; i++) {
-			if(g[i].reduce(f) !== 45){ 
+			if(g[i].reduce(f) !== 45) { 
 				return false 
 			}
-			if(getColumn(g, i).reduce(f) !== 45){ 
+			if(getColumn(g, i).reduce(f) !== 45) { 
 				return false 
 			}
 		}
 
 		let sqs = getSquares(g)
-		for(let i in sqs){
-			if(sqs[i].reduce(f) !== 45){ 
+		for(let i in sqs) {
+			if(sqs[i].reduce(f) !== 45) { 
 				return false 
 			}
 		}
@@ -196,27 +197,27 @@ const SudokuSolver = () => {
 
 	function copyGrid(g) {
 		gnew = []
-		for(let i = 0; i < g.length; i++){
+		for(let i = 0; i < g.length; i++) {
 			gnew.push([])
-			for(let n = 0; n < g.length; n++){
+			for(let n = 0; n < g.length; n++) {
 				gnew[i].push(g[i][n])
 			}
 		}
 		return gnew
 	}
 
-	function gridsEqual(g1, g2){
-		for(let i = 0; i < g1.length; i++){
-			for(let n = 0; n < g1.length; n++){
+	function gridsEqual(g1, g2) {
+		for(let i = 0; i < g1.length; i++) {
+			for(let n = 0; n < g1.length; n++) {
 				if( g1[i][n] !== g2[i][n] ) return false
 			}
 		}
 		return true
 	}
 
-	function getColumn(grid, x){
+	function getColumn(grid, x) {
 		let col = []
-		for(let i = 0; i < 9; i++){
+		for(let i = 0; i < 9; i++) {
 			col.push(grid[i][x])
 		}
 		return col
@@ -224,23 +225,23 @@ const SudokuSolver = () => {
 
 	function getSquares(g) {
 		let squares = []
-		for(let i = 0; i < 2; i += 3){
-			for(let n = 0; n < 2; n += 3){
+		for(let i = 0; i < 2; i += 3) {
+			for(let n = 0; n < 2; n += 3) {
 				squares.push(getSquare(g, i, n))
 			}
 		}
 		return squares
 	}
 
-	function getSquare(grid, i, n){
+	function getSquare(grid, i, n) {
 		const x1 = 3 * Math.floor(i/3)
 		const y1 = 3 * Math.floor(n/3)
 		const x2 = 3 + x1
 		const y2 = 3 + y1
 
 		let box = []
-		for(let x = x1; x < x2; x++){
-			for(let y = y1; y < y2; y++){
+		for(let x = x1; x < x2; x++) {
+			for(let y = y1; y < y2; y++) {
 				box.push(grid[x][y])
 			}
 		}
@@ -249,4 +250,3 @@ const SudokuSolver = () => {
 
 	return Interface
 }
-
