@@ -1,58 +1,58 @@
 table {
-	border-spacing:0px;
+  border-spacing:0px;
 }
 
 tr {
-	line-height:15px;
+  line-height:15px;
 }
 
 td {
-	border:1px solid black;
-	width:2em;
-	height:2em;
+  border:1px solid black;
+  width:2em;
+  height:2em;
 }
 
 input {
-	border:0px;
-	resize: none;
-	padding: 0px;
-	margin: 0px;
-	width:inherit;
-	height:inherit;
-	text-align:center;
-	font-size: 1.9em;
+  border:0px;
+  resize: none;
+  padding: 0px;
+  margin: 0px;
+  width:inherit;
+  height:inherit;
+  text-align:center;
+  font-size: 1.9em;
 }
 
 input:focus{
-	background-color:yellow;
+  background-color:yellow;
 }
 
 .button {
-	border-width: 0px;
-	border-style: solid black;
-	margin: 4px;
-	padding: 6px;
-	padding-bottom: 6px;
-	background: white;
-	font-size: 1em;
-	background-color: #d1d1d1;
+  border-width: 0px;
+  border-style: solid black;
+  margin: 4px;
+  padding: 6px;
+  padding-bottom: 6px;
+  background: white;
+  font-size: 1em;
+  background-color: #d1d1d1;
 }
 
 .button:hover {
 }
 
 #text {
-	height: 11em;
-	display: block;
+  height: 11em;
+  display: block;
 }
 
 #advanced-holder {
-	visibility: hidden;
+  visibility: hidden;
 }
 
 #solver {
-	position: absolute;
-	left: 50%;
-	transform: translate(-50%);
-	-webkit-transform: translate(-50%);
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
+  -webkit-transform: translate(-50%);
 }
